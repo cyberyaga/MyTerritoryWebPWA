@@ -4,7 +4,7 @@
 @inject HttpClient Http
 
 <h2>Territories</h2>
-
+<NavLink href="/Territory/Create" class="btn btn-outline-secondary"><i class="fa fa-plus-square" aria-hidden="true"></i> Create Territory</NavLink>
 @if (territories == null)
 {
     <p><em>Loading...</em></p>
@@ -27,18 +27,16 @@ else
             @foreach (var t in territories)
             {
                 <tr>
-                    <td>@t.TerritoryName</td>
+                    <td><NavLink class="nav-link" href="@t.TerritoryUrl">@t.TerritoryName</NavLink></td>
                     <td>
-                        <NavLink class="nav-link" href="@t.DoorsUrl">
-                            @t.DoorCount
-                        </NavLink>
+                        <NavLink class="nav-link" href="@t.DoorsUrl">@t.DoorCount</NavLink>
                     </td>
                     <td>@t.City</td>
                     <td>@t.TerritoryType</td>
                     <td></td>
                     <td></td>
                     <td></td>
-                </tr>            
+                </tr>
             }
         </tbody>
     </table>
@@ -52,7 +50,7 @@ else
     {
         try
         {
-            territories = await Http.GetFromJsonAsync<TerritoryIndexView[]>("Territory");
+            territories = await Http.GetFromJsonAsync<TerritoryIndexView[]>("Territory/GetTerritories");
         }
         catch (AccessTokenNotAvailableException exception)
         {

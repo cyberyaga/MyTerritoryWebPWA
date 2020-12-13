@@ -1,0 +1,89 @@
+@page "/Territory/Details/{TerritoryId:int}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TerritoryWeb.Shared.Territory
+@inject HttpClient Http
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">Home</li>
+        <li class="breadcrumb-item">Territory</li>
+        <li class="breadcrumb-item active">Territory Details</li>
+    </ol>
+</nav>
+<h2>Details</h2>
+<EditForm Model="@td">
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>
+                    Territory Name
+                    <InputText @bind-Value="td.TerritoryName" class="form-control" readonly />
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    City
+                    <InputText @bind-Value="td.City" class="form-control" readonly />
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    Type
+                    <InputText @bind-Value="td.TerritoryTypeStr" class="form-control" readonly />
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    Notes
+                    <InputTextArea @bind-Value="td.Notes" class="form-control" readonly />
+                </label>
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-group">
+                <label>
+                    Assigned Publisher
+                    <InputText @bind-Value="td.AssignedPublisher" class="form-control" readonly />
+                </label>
+            </div>            
+            <div class="form-group">
+                <label>
+                    Checked Out
+                    <InputDate @bind-Value="td.CheckedOut" class="form-control" readonly />
+                </label>
+            </div>            
+            <div class="form-group">
+                <label>
+                    Checked In
+                    <InputDate @bind-Value="td.CheckedIn" class="form-control" readonly />
+                </label>
+            </div>            
+            <div class="form-group">
+                <label>
+                    Last Checked In By
+                    <InputText @bind-Value="td.LastCheckedInBy" class="form-control" readonly />
+                </label>
+            </div>
+        </div>
+        <div class="col">
+            Map
+        </div>
+    </div>
+</EditForm>
+@code {
+    [Parameter]
+    public int TerritoryId { get; set; }
+    private TerritoryDetails td = new TerritoryDetails();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            td = await Http.GetFromJsonAsync<TerritoryDetails>("Territory/GetTerritoryDetails/" + TerritoryId.ToString());
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

@@ -13,6 +13,14 @@ namespace TerritoryWeb.Shared.Territory
         public DateTime LastCheckedOut { get; set; }
         public DateTime LastCheckedIn { get; set; }
 
+        public string TerritoryUrl
+        {
+            get
+            {
+                return "Territory/Details/" + this.TerritoryId;
+            }
+        }
+
         public string DoorsUrl
         {
             get
