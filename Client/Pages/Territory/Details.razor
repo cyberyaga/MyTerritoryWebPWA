@@ -1,8 +1,15 @@
 @page "/Territory/Details/{TerritoryId:int}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TerritoryWeb.Shared.Territory
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
 @inject HttpClient Http
 
+<style>
+    #map {
+        height: 400px;
+    }
+</style>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">Home</li>
@@ -13,60 +20,47 @@
 <h2>Details</h2>
 <EditForm Model="@td">
     <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label>
-                    Territory Name
-                    <InputText @bind-Value="td.TerritoryName" class="form-control" readonly />
-                </label>
+        <div class="col-sm">
+            <div class="mb-3">
+                <label>Territory Name</label>
+                <InputText @bind-Value="td.TerritoryName" class="form-control" readonly />
             </div>
-            <div class="form-group">
-                <label>
-                    City
-                    <InputText @bind-Value="td.City" class="form-control" readonly />
-                </label>
+            <div class="mb-3">
+                <label>City</label>
+                <InputText @bind-Value="td.City" class="form-control" readonly />
             </div>
-            <div class="form-group">
-                <label>
-                    Type
-                    <InputText @bind-Value="td.TerritoryTypeStr" class="form-control" readonly />
-                </label>
+            <div class="mb-3">
+                <label>Type</label>
+                <InputText @bind-Value="td.TerritoryTypeStr" class="form-control" readonly />
             </div>
-            <div class="form-group">
-                <label>
-                    Notes
-                    <InputTextArea @bind-Value="td.Notes" class="form-control" readonly />
-                </label>
+            <div class="mb-3">
+                <label>Notes</label>
+                <InputTextArea @bind-Value="td.Notes" class="form-control" readonly />
+            </div>
+            <h3>Doors Details</h3>
+            Door Count: @td.DoorCount
+        </div>
+        <div class="col-sm">
+            <div class="mb-3">
+                <label>Assigned Publisher</label>
+                <InputText @bind-Value="td.AssignedPublisher" class="form-control" readonly />
+            </div>            
+            <div class="mb-3">
+                <label>Checked Out</label>
+                <InputDate @bind-Value="td.CheckedOut" class="form-control" readonly />
+            </div>            
+            <div class="mb-3">
+                <label>Checked In</label>
+                <InputDate @bind-Value="td.CheckedIn" class="form-control" readonly />
+            </div>            
+            <div class="fmb-3">
+                <label>Last Checked In By</label>
+                <InputText @bind-Value="td.LastCheckedInBy" class="form-control" readonly />
             </div>
         </div>
-        <div class="col">
-            <div class="form-group">
-                <label>
-                    Assigned Publisher
-                    <InputText @bind-Value="td.AssignedPublisher" class="form-control" readonly />
-                </label>
-            </div>            
-            <div class="form-group">
-                <label>
-                    Checked Out
-                    <InputDate @bind-Value="td.CheckedOut" class="form-control" readonly />
-                </label>
-            </div>            
-            <div class="form-group">
-                <label>
-                    Checked In
-                    <InputDate @bind-Value="td.CheckedIn" class="form-control" readonly />
-                </label>
-            </div>            
-            <div class="form-group">
-                <label>
-                    Last Checked In By
-                    <InputText @bind-Value="td.LastCheckedInBy" class="form-control" readonly />
-                </label>
-            </div>
-        </div>
-        <div class="col">
+        <div class="col-6">
             Map
+            <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
         </div>
     </div>
 </EditForm>
@@ -75,6 +69,23 @@
     public int TerritoryId { get; set; }
     private TerritoryDetails td = new TerritoryDetails();
 
+    //Map
+    private GoogleMap map1;
+	private MapOptions mapOptions;	
+
+	protected override void OnInitialized()
+	{
+		mapOptions = new MapOptions()
+		{
+			Zoom = 13,
+			Center = new LatLngLiteral()
+			{
+				Lat = 40.603629,
+				Lng = -75.472518
+			},
+			MapTypeId = MapTypeId.Roadmap
+		};
+	}	
     protected override async Task OnInitializedAsync()
     {
         try
