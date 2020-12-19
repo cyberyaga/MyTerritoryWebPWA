@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace TerritoryWebPWA.Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class DoorController : ControllerBase

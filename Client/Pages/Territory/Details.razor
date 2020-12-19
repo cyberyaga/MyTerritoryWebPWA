@@ -12,8 +12,8 @@
 </style>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item">Home</li>
-        <li class="breadcrumb-item">Territory</li>
+        <li class="breadcrumb-item"><NavLink href="/">Home</NavLink></li>
+        <li class="breadcrumb-item"><NavLink href="/Territory">Territory</NavLink></li>
         <li class="breadcrumb-item active">Territory Details</li>
     </ol>
 </nav>
@@ -39,6 +39,7 @@
             </div>
             <h3>Doors Details</h3>
             Door Count: @td.DoorCount
+            <NavLink href="@td.DoorsUrl" class="btn btn-outline-secondary"><i class="fa fa-address-book-o" aria-hidden="true"></i> View Territory Doors</NavLink>
         </div>
         <div class="col-sm">
             <div class="mb-3">
@@ -53,14 +54,19 @@
                 <label>Checked In</label>
                 <InputDate @bind-Value="td.CheckedIn" class="form-control" readonly />
             </div>            
-            <div class="fmb-3">
+            <div class="mb-3">
                 <label>Last Checked In By</label>
                 <InputText @bind-Value="td.LastCheckedInBy" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-reply" aria-hidden="true"></i> Check Out</button>
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-share" aria-hidden="true"></i> Check In</button>
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-share-square-o" aria-hidden="true"></i> Share Territory</button>
             </div>
         </div>
         <div class="col-6">
             Map
-            <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions"></GoogleMap>
+            <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" OnAfterInit="@(async () => await OnAfterInitAsync())"></GoogleMap>
         </div>
     </div>
 </EditForm>
@@ -72,6 +78,8 @@
     //Map
     private GoogleMap map1;
 	private MapOptions mapOptions;	
+    private List<LatLngLiteral> path = new List<LatLngLiteral>();
+    private Polygon polygon;
 
 	protected override void OnInitialized()
 	{
@@ -91,10 +99,35 @@
         try
         {
             td = await Http.GetFromJsonAsync<TerritoryDetails>("Territory/GetTerritoryDetails/" + TerritoryId.ToString());
+            
+            //Convert TerritoryBounds to path
+            if (td.TerritoryBounds.Count > 0)
+            {
+                foreach (var tb in td.TerritoryBounds)
+                {
+                    path.Add(new LatLngLiteral() { Lat = tb.GeoLat, Lng = tb.GeoLong });
+                }                
+            }
+           
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+    }
+
+    private async Task OnAfterInitAsync()
+    {
+        polygon = await Polygon.CreateAsync(map1.JsRuntime, new PolygonOptions() 
+        {
+            Map = map1.InteropObject
+        });
+
+        await polygon.SetPath(path);
+        LatLngLiteral center = Common.Compute2DPolygonCentroid(path);
+        if (center.Lat != 0)
+        {
+            await map1.InteropObject.SetCenter(center);
+        };
     }
 }

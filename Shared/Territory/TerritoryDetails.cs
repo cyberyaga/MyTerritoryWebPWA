@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TerritoryWeb.Shared.Territory
 {
@@ -14,5 +15,20 @@ namespace TerritoryWeb.Shared.Territory
         public DateTime? CheckedIn { get; set; }
         public string LastCheckedInBy { get; set; }
         public int DoorCount { get; set; }
+        public List<TerritoryBound> TerritoryBounds { get; set; }
+
+        public class TerritoryBound
+        {
+            public double GeoLat { get; set; }
+            public double GeoLong { get; set; }
+        }
+
+        public string DoorsUrl
+        {
+            get
+            {
+                return "Door/" + this.Id;
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Toolbelt.Blazor.Extensions.DependencyInjection; 
 
 namespace TerritoryWeb.Client
 {
@@ -25,6 +26,9 @@ namespace TerritoryWeb.Client
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("TerritoryWeb.ServerAPI"));
 
             builder.Services.AddApiAuthorization();
+
+            //Localization
+            builder.Services.AddI18nText();
 
             await builder.Build().RunAsync();
         }

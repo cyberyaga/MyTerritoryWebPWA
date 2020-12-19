@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TerritoryWeb.Server.Data;
 using TerritoryWeb.Shared.Territory;
+using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using static TerritoryWeb.Shared.Territory.TerritoryDetails;
 
 namespace TerritoryWebPWA.Server.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class TerritoryController : ControllerBase
@@ -38,24 +41,38 @@ namespace TerritoryWebPWA.Server.Controllers
         [HttpGet("GetTerritoryDetails/{TerritoryId}")]
         public TerritoryDetails GetTerritoryDetails(int TerritoryId)
         {
+            TerritoryDetails tds = new TerritoryDetails();
+
             var td = 
-                from t in db.Territories
+                (from t in db.Territories.Include(tb => tb.TerritoryBounds).Include(d => d.Doors)
                 where t.Id == TerritoryId
-                select new TerritoryDetails()
+                select t).SingleOrDefault();
+
+            if (td != null)
+            {
+                tds = new TerritoryDetails()
                 {
-                    Id = t.Id,
-                    TerritoryName = t.TerritoryName,
-                    City = t.City,
-                    TerritoryTypeStr = t.TerritoryType.Description,
-                    Notes = t.Notes,
-                    DoorCount = t.Doors.Count,
+                    Id = td.Id,
+                    TerritoryName = td.TerritoryName,
+                    City = td.City,
+                    TerritoryTypeStr = td.TerritoryType != null ? td.TerritoryType.Description : "",
+                    Notes = td.Notes,
+                    DoorCount = td.Doors.Count,
                     //AssignedPublisher = t.
-                    CheckedOut = t.CheckedOut,
-                    CheckedIn = t.CheckedIn,
-                    LastCheckedInBy = t.LastCheckedInBy
+                    CheckedOut = td.CheckedOut,
+                    CheckedIn = td.CheckedIn,
+                    LastCheckedInBy = td.LastCheckedInBy,
+                    TerritoryBounds = new List<TerritoryBound>()
                 };
 
-            return td.SingleOrDefault();
+                //TerritoryBounds
+                foreach (var tb in td.TerritoryBounds)
+                {
+                    tds.TerritoryBounds.Add(new TerritoryBound() { GeoLat = decimal.ToDouble(tb.GeoLat), GeoLong = decimal.ToDouble(tb.GeoLong) });
+                }
+            }
+
+            return tds;
         }
     }
 }

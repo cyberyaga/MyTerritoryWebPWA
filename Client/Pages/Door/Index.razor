@@ -3,6 +3,13 @@
 @using TerritoryWeb.Shared.Door
 @inject HttpClient Http
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><NavLink href="/">Home</NavLink></li>
+        <li class="breadcrumb-item"><NavLink href="/Territory">Territory</NavLink></li>
+        <li class="breadcrumb-item active">Territory Doors</li>
+    </ol>
+</nav>
 <h2>Doors</h2>
 
 @if (doors == null)

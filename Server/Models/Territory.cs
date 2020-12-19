@@ -29,7 +29,7 @@ namespace TerritoryWeb.Server.Models
     
         public virtual Congregation Congregation { get; set; }
         public virtual TerritoryType TerritoryType { get; set; }
-        // public virtual ICollection<TerritoryBound> TerritoryBounds { get; set; }
+        public virtual ICollection<TerritoryBound> TerritoryBounds { get; set; }
         // public virtual AspNetUser AssignedUser { get; set; }
         // public virtual AspNetUser LastCheckedInUser { get; set; }
         public virtual ICollection<Door> Doors { get; set; }

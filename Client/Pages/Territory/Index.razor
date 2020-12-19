@@ -3,6 +3,12 @@
 @using TerritoryWeb.Shared.Territory
 @inject HttpClient Http
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><NavLink href="/">Home</NavLink></li>
+        <li class="breadcrumb-item active">Territory</li>
+    </ol>
+</nav>
 <h2>Territories</h2>
 <NavLink href="/Territory/Create" class="btn btn-outline-secondary"><i class="fa fa-plus-square" aria-hidden="true"></i> Create Territory</NavLink>
 @if (territories == null)
