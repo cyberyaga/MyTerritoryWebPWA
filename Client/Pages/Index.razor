@@ -8,14 +8,9 @@
 
 <h1>@L.HelloWorld</h1>
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-<input type="text" class="form-control">
-
 @code{
     I18nText.Home L = new I18nText.Home();
-
+    
     protected override async Task OnInitializedAsync()
     {
         //Load Localization

@@ -3,6 +3,7 @@
 @using TerritoryWeb.Shared.Territory
 @using GoogleMapsComponents
 @using GoogleMapsComponents.Maps
+@inject Toolbelt.Blazor.I18nText.I18nText I18nText
 @inject HttpClient Http
 
 <style>
@@ -12,56 +13,56 @@
 </style>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><NavLink href="/">Home</NavLink></li>
-        <li class="breadcrumb-item"><NavLink href="/Territory">Territory</NavLink></li>
-        <li class="breadcrumb-item active">Territory Details</li>
+        <li class="breadcrumb-item"><NavLink href="/">@B.Home</NavLink></li>
+        <li class="breadcrumb-item"><NavLink href="/Territory">@B.Territory</NavLink></li>
+        <li class="breadcrumb-item active">@B.TerritoryDetails</li>
     </ol>
 </nav>
-<h2>Details</h2>
+<h2>@L.PageTitle</h2>
 <EditForm Model="@td">
     <div class="row">
         <div class="col-sm">
             <div class="mb-3">
-                <label>Territory Name</label>
+                <label>@L.TerritoryName</label>
                 <InputText @bind-Value="td.TerritoryName" class="form-control" readonly />
             </div>
             <div class="mb-3">
-                <label>City</label>
+                <label>@L.City</label>
                 <InputText @bind-Value="td.City" class="form-control" readonly />
             </div>
             <div class="mb-3">
-                <label>Type</label>
+                <label>@L.Type</label>
                 <InputText @bind-Value="td.TerritoryTypeStr" class="form-control" readonly />
             </div>
             <div class="mb-3">
-                <label>Notes</label>
+                <label>@L.Notes</label>
                 <InputTextArea @bind-Value="td.Notes" class="form-control" readonly />
             </div>
-            <h3>Doors Details</h3>
-            Door Count: @td.DoorCount
-            <NavLink href="@td.DoorsUrl" class="btn btn-outline-secondary"><i class="fa fa-address-book-o" aria-hidden="true"></i> View Territory Doors</NavLink>
+            <h3>@L.DoorDetails</h3>
+            @L.DoorCount: @td.DoorCount
+            <NavLink href="@td.DoorsUrl" class="btn btn-outline-secondary"><i class="fa fa-address-book-o" aria-hidden="true"></i> @L.TerritoryDoorBtn</NavLink>
         </div>
         <div class="col-sm">
             <div class="mb-3">
-                <label>Assigned Publisher</label>
+                <label>@L.AssignedPublisher</label>
                 <InputText @bind-Value="td.AssignedPublisher" class="form-control" readonly />
             </div>            
             <div class="mb-3">
-                <label>Checked Out</label>
+                <label>@L.CheckedOut</label>
                 <InputDate @bind-Value="td.CheckedOut" class="form-control" readonly />
             </div>            
             <div class="mb-3">
-                <label>Checked In</label>
+                <label>@L.CheckedIn</label>
                 <InputDate @bind-Value="td.CheckedIn" class="form-control" readonly />
             </div>            
             <div class="mb-3">
-                <label>Last Checked In By</label>
+                <label>@L.LastCheckedInBy</label>
                 <InputText @bind-Value="td.LastCheckedInBy" class="form-control" readonly />
             </div>
             <div class="mb-3">
-                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-reply" aria-hidden="true"></i> Check Out</button>
-                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-share" aria-hidden="true"></i> Check In</button>
-                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-share-square-o" aria-hidden="true"></i> Share Territory</button>
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-reply" aria-hidden="true"></i> @L.CheckOutBtn</button>
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-share" aria-hidden="true"></i> @L.CheckInBtn</button>
+                <button type="button" class="btn btn-outline-secondary"><i class="fa fa-share-square-o" aria-hidden="true"></i> @L.ShareTerritoryBtn</button>
             </div>
         </div>
         <div class="col-6">
@@ -74,6 +75,11 @@
     [Parameter]
     public int TerritoryId { get; set; }
     private TerritoryDetails td = new TerritoryDetails();
+
+    //Language
+    I18nText.Territory.Details L = new I18nText.Territory.Details();
+    I18nText.Shared.Breadcrum B = new I18nText.Shared.Breadcrum();
+    I18nText.Shared.Common C = new I18nText.Shared.Common();
 
     //Map
     private GoogleMap map1;
@@ -96,6 +102,11 @@
 	}	
     protected override async Task OnInitializedAsync()
     {
+        //Load Localization
+        L = await I18nText.GetTextTableAsync<I18nText.Territory.Details>(this);
+        B = await I18nText.GetTextTableAsync<I18nText.Shared.Breadcrum>(this);
+        C = await I18nText.GetTextTableAsync<I18nText.Shared.Common>(this);
+
         try
         {
             td = await Http.GetFromJsonAsync<TerritoryDetails>("Territory/GetTerritoryDetails/" + TerritoryId.ToString());
